@@ -1,16 +1,9 @@
 var current_user = "";
 var token = "mytoken";
 
-////////
 function show_view(view) {
-    let views = document.getElementsByClassName("view");
-
-    for (let view of views) {
-        view.style.display = "none";
-    }
-
-    let view_el = document.getElementById(view);
-    view_el.style.display = "block";
+    $(".view").hide();
+    $("#" + view).show();
 }
 
 function show_feed() {
