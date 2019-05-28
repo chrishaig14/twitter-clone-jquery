@@ -320,9 +320,10 @@ function setup_signup() {
             }
         };
         request.open("POST", "users");
-        let username = document.getElementById("signup-username-input").value;
-        let password = document.getElementById("signup-password-input").value;
-        let info = document.getElementById("signup-info-input").value;
+
+        let username = $("#signup-username-input").val();
+        let password = $("#signup-password-input").val();
+        let info = $("#signup-info-input").val();
         request.send(JSON.stringify({username: username, password: password, info: info}));
     });
 }
