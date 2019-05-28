@@ -242,21 +242,13 @@ function make_post(post_data) {
 
 function make_feed(feed_data) {
     show_view("view-feed");
-
-
-    let post_container = document.getElementById("post-container");
-    let new_post_form = post_container.children[0];
-    while (post_container.firstChild) {
-        post_container.removeChild(post_container.firstChild);
-    }
-    post_container.appendChild(new_post_form);
-
+    let post_container = $("#post-container");
+    post_container.children().not("#new-post").remove();
     for (let post_data of feed_data.posts) {
         let post_clone = make_post(post_data);
-        post_container.appendChild(post_clone);
+        post_container.append(post_clone);
     }
-    let username_span = document.getElementById("username-span");
-    username_span.innerText = current_user;
+    $("#username-span").text(current_user);
 }
 
 function setup_login() {
