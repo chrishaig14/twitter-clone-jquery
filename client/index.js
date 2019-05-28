@@ -330,15 +330,25 @@ function setup_signup() {
 let timeout = null;
 
 function setup_feed() {
-    let home_btn = document.getElementById("home-button");
-    home_btn.addEventListener("click", () => {
-        document.getElementById("profile-pic-label").style.display = "block";
-        let follow_button = document.getElementById("follow-button");
-        let unfollow_button = document.getElementById("unfollow-button");
-        follow_button.style.display = "none";
-        unfollow_button.style.display = "none";
-        show_feed();
-    });
+
+    $("#home-button").click(
+        () => {
+            $("#profile-pic-label").show();
+            $("#follow-button").hide();
+            $("#unfollow-button").hide();
+            show_feed();
+        }
+    );
+
+    // let home_btn = document.getElementById("home-button");
+    // home_btn.addEventListener("click", () => {
+    //     document.getElementById("profile-pic-label").style.display = "block";
+    //     let follow_button = document.getElementById("follow-button");
+    //     let unfollow_button = document.getElementById("unfollow-button");
+    //     follow_button.style.display = "none";
+    //     unfollow_button.style.display = "none";
+    //     show_feed();
+    // });
     let new_post_form = document.getElementById("new-post-form");
     new_post_form.addEventListener("submit", function (e) {
         e.preventDefault();
