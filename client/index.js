@@ -150,41 +150,42 @@ function show_user(username) {
 
 
 function make_post(post_data) {
-
     console.log("POST DATA RECEIVED: ,", post_data);
     let post_template = document.getElementById("post-template");
     let post_clone = post_template.content.cloneNode(true);
-    let post = post_clone.children[0];
+    let post = $(post_clone.children[0]);
+    console.log("post:", post);
     let user_img_req = new XMLHttpRequest();
     user_img_req.onreadystatechange = function () {
         if (user_img_req.readyState === 4 && user_img_req.status === 200) {
-            post.getElementsByTagName("img")[0].src = user_img_req.responseText;
+            post.find("img").eq(0).attr("src", user_img_req.responseText);
         }
     };
     user_img_req.open("GET", "/users/" + post_data.username + "/img");
 
     user_img_req.send();
-    // post.getElementsByTagName("img")[0].src = "https://i.pravatar.cc/48";
-    post.getElementsByClassName("post-user")[0].innerHTML = post_data.username;
-    post.getElementsByClassName("post-user")[0].addEventListener("click", () => {
-        console.log("LINK TO USER CLICKED!");
-        show_user(post_data.username);
-        // show_view("view-user");
-    });
-    post.getElementsByClassName("post-content")[0].innerHTML = post_data.content;
-    let post_timestamp = post_clone.children[0].getElementsByClassName("post-timestamp")[0];
+    console.log("children: ", post.find(".post-user"));
+    console.log("children: ", post.find(".post-user").eq(0));
+    post.find(".post-user").eq(0).text(post_data.username);
+    post.find(".post-user").eq(0).click(() => {
+            console.log("LINK TO USER CLICKED!");
+            show_user(post_data.username);
+        }
+    );
+    post.find(".post-content").eq(0).text(post_data.content);
+    let post_timestamp = post.find(".post-timestamp").eq(0);
     var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
     let date_string = new Date(post_data.timestamp).toLocaleDateString("default", options);
-    post_timestamp.innerText = (date_string);
-    let comment_section = post.getElementsByClassName("comment-section")[0];
-    comment_section.style.display = "none";
-    let comment_form = post.getElementsByClassName("comment-form")[0];
+    post_timestamp.text(date_string);
+    let comment_section = post.find(".comment-section").eq(0);
+    comment_section.hide();
+    let comment_form = post.find(".comment-form").eq(0);
     console.log("ELEMENT: ", comment_form);
-    comment_form.addEventListener("submit", function (e) {
+    comment_form.submit(function (e) {
         e.preventDefault();
         console.log("COMMENTING...");
-        let comment_input = comment_form.getElementsByClassName("comment-input")[0];
-        let content = comment_input.value;
+        let comment_input = comment_form.find(".comment-input").eq(0);
+        let content = comment_input.val();
         let request = new XMLHttpRequest();
 
         request.onreadystatechange = function () {
@@ -193,17 +194,12 @@ function make_post(post_data) {
                 console.log(new Date());
 
                 let comment_template = document.getElementById("comment-template");
-                let new_comment = comment_template.content.cloneNode(true).children[0];
-                let new_content = new_comment.getElementsByClassName("comment-content")[0];
-
-
-                // let comment_template = comment_section.getElementsByClassName("comment")[0];
-                // let new_comment = comment_template.cloneNode(true);
-                // let new_content = new_comment.getElementsByClassName("comment-content")[0];
-                new_content.innerText = content;
-                let comment_user = new_comment.getElementsByClassName("comment-user")[0];
-                comment_user.innerText = current_user;
-                comment_section.appendChild(new_comment);
+                let new_comment = $(comment_template.content.cloneNode(true).children[0]);
+                let new_content = new_comment.find(".comment-content").eq(0);
+                new_content.text(content);
+                let comment_user = new_comment.find(".comment-user").eq(0);
+                comment_user.text(current_user);
+                comment_section.append(new_comment);
             } else {
                 console.log("COULD NOT POST COMMENT!");
             }
@@ -211,10 +207,9 @@ function make_post(post_data) {
         request.open("POST", "/posts/" + post_data.id + "/comments");
         request.send(JSON.stringify({username: current_user, content: content, parent: -1}));
     });
-    let reply_button = post.getElementsByClassName("reply-button")[0];
-    reply_button.addEventListener("click", () => {
-        comment_section.style.display = "block";
-        // comment_section.
+    let reply_button = post.find(".reply-button").eq(0);
+    reply_button.click(() => {
+        comment_section.show();
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             console.log("STATE CHANGED TO", this.readyState);
@@ -223,13 +218,13 @@ function make_post(post_data) {
                 let comments = JSON.parse(request.responseText);
                 for (let comment of comments) {
                     let comment_template = document.getElementById("comment-template");
-                    let new_comment = comment_template.content.cloneNode(true).children[0];
+                    let new_comment = $(comment_template.content.cloneNode(true).children[0]);
                     console.log(new_comment);
-                    let content = new_comment.getElementsByClassName("comment-content")[0];
-                    content.innerText = comment.content;
-                    let comment_user = new_comment.getElementsByClassName("comment-user")[0];
-                    comment_user.innerText = comment.username;
-                    comment_section.appendChild(new_comment);
+                    let content = new_comment.find(".comment-content").eq(0);
+                    content.text(comment.content);
+                    let comment_user = new_comment.find(".comment-user").eq(0);
+                    comment_user.text(comment.username);
+                    comment_section.append(new_comment);
                 }
             }
         };
