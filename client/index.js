@@ -253,9 +253,8 @@ function make_feed(feed_data) {
 }
 
 function setup_login() {
-    let login_form = document.getElementById("login-form");
-
-    login_form.addEventListener("submit",
+    let login_form = $("#login-form");
+    login_form.submit(
         function (event) {
             event.preventDefault();
             let request = new XMLHttpRequest();
@@ -266,38 +265,34 @@ function setup_login() {
 
                 if (this.readyState === 4 && this.status === 200) {
                     console.log("LOGIN OK");
-                    current_user = document.getElementById("login-username-input").value;
+                    current_user = $("#login-username-input").val();
                     document.cookie = "current_user=" + current_user;
-                    document.getElementById("profile-pic-label").style.display = "block";
-                    let follow_button = document.getElementById("follow-button");
-                    let unfollow_button = document.getElementById("unfollow-button");
-                    follow_button.style.display = "none";
-                    unfollow_button.style.display = "none";
+                    $("#profile-pic-label").show();
+                    $("#follow-button").hide();
+                    $("#unfollow-button").hide();
                     show_feed();
                 } else {
-                    let result = document.getElementById("login-result");
-
+                    let result = $("#login-result");
                     if (this.readyState === 4 && this.status === 204) {
-                        result.style.visibility = "visible";
-                        result.innerText = "ERROR: username doesn't exist or password is wrong.";
-                        document.getElementById("username-input").value = "";
-                        document.getElementById("password-input").value = "";
+                        result.css("visibility", "visible");
+                        result.text("ERROR: username doesn't exist or password is wrong.");
+                        $("#login-username-input").val("");
+                        $("#login-password-input").val("");
                         console.log("ERROR: username doesn't exist or password is wrong.");
                     } else if (this.readyState === 4 && this.status === 202) {
-                        result.style.visibility = "visible";
-                        result.innerText = "ERROR: unknown error";
+                        result.css("visibility", "visible");
+                        result.text("ERROR: unknown error");
                         console.log("ERROR: unknown error", request.responseText);
                     }
                 }
             };
             request.open("POST", "login");
-            let username = document.getElementById("login-username-input").value;
-            let password = document.getElementById("login-password-input").value;
+            let username = $("#login-username-input").val();
+            let password = $("#login-password-input").val();
             request.send(JSON.stringify({username: username, password: password}));
-        }, false);
-    let signup_button = document.getElementById("sign-up-button");
-    // console.log(signup_button);
-    signup_button.addEventListener("click", () => {
+        });
+    let signup_button = $("#sign-up-button");
+    signup_button.click(() => {
         show_view("view-signup");
     });
 }
