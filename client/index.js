@@ -296,8 +296,7 @@ function setup_login() {
 }
 
 function setup_signup() {
-    let signup_form = document.getElementById("signup-form");
-    signup_form.addEventListener("submit", function (e) {
+    $("#signup-form").submit(function (e) {
         e.preventDefault();
         let request = new XMLHttpRequest();
         request.onreadystatechange = function () {
