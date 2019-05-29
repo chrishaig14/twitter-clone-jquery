@@ -1,5 +1,4 @@
 var current_user = "";
-var token = "mytoken";
 
 function show_view(view) {
     $(".view").hide();
@@ -10,19 +9,12 @@ function show_feed() {
     let feed_request = new XMLHttpRequest();
     feed_request.onreadystatechange = function () {
         if (feed_request.readyState === 4 && feed_request.status === 200) {
-            // console.log(feed_request.responseText);
-            // console.log("FEED DATA RECEIVED:", feed_request.responseText);
             make_feed(JSON.parse(feed_request.responseText));
-
             let pic_request = new XMLHttpRequest();
-
             pic_request.onreadystatechange = function () {
                 if (pic_request.readyState === 4 && pic_request.status === 200) {
                     let user_pic = document.getElementById("user-pic");
-
-                    // console.log("received:::", JSON.parse(pic_request.responseText));
                     user_pic.src = JSON.parse(pic_request.responseText)[0].img;
-                    // console.log("received image ok!");
                 }
             };
             pic_request.open("POST", "userpicture");
@@ -31,38 +23,15 @@ function show_feed() {
     };
     feed_request.open("GET", "feed");
     feed_request.setRequestHeader("Authorization", "Basic " + str_obj(document.cookie).current_user);
-    // console.log("current_user:", current_user);
     feed_request.send();
-    // feed_request.send(JSON.stringify({username: str_obj(document.cookie).current_user}));
     document.cookie = "state=feed;";
 }
-
-let Request = function () {
-    let req_obj = {
-        xhr: new XMLHttpRequest(),
-        send: function (body) {
-            req_obj.xhr.onreadystatechange = function () {
-                if (req_obj.xhr.readyState === 4) {
-                    req_obj.handlers[req_obj.xhr.status](req_obj.xhr);
-                }
-            };
-            req_obj.xhr.send(body);
-        },
-        handlers: {},
-        add_response_handler: function (status, handler) {
-            req_obj.handlers[status] = handler;
-        }
-    };
-    return req_obj;
-};
 
 function show_user(username) {
     console.log("### USERNAME: ", username, " ### CURRENT USER:", current_user);
     if (username !== current_user) {
         console.log("SEEING ANOTHER USER");
-
         $("#profile-pic-label").hide();
-
         let follow_button_o = $("#follow-button");
         let follow_button = follow_button_o.clone(true);
         follow_button_o.replaceWith(follow_button);
@@ -89,7 +58,6 @@ function show_user(username) {
                     unfollow_button.hide();
                     follow_button.show();
                 }
-
                 console.log("STOPPED FOLLOWING USER:", username);
             };
             xhr.open("DELETE", "/users/" + current_user + "/followees/" + username);
@@ -101,12 +69,10 @@ function show_user(username) {
             if (req.readyState === 4 && req.status === 200) {
                 follow_button.hide();
                 unfollow_button.show();
-
                 console.log("FOLLOWING!!!");
             } else if (req.readyState === 4 && req.status === 204) {
                 follow_button.show();
                 unfollow_button.hide();
-
                 console.log("NOT FOLLOWING!!!");
             }
         };
@@ -141,13 +107,11 @@ function show_user(username) {
             };
             user_posts_req.open("GET", "/users/" + username + "/posts");
             user_posts_req.send();
-
         }
     };
     user_info_req.open("GET", "/users/" + username);
     user_info_req.send();
 }
-
 
 function make_post(post_data) {
     console.log("POST DATA RECEIVED: ,", post_data);
@@ -162,7 +126,6 @@ function make_post(post_data) {
         }
     };
     user_img_req.open("GET", "/users/" + post_data.username + "/img");
-
     user_img_req.send();
     console.log("children: ", post.find(".post-user"));
     console.log("children: ", post.find(".post-user").eq(0));
@@ -187,12 +150,10 @@ function make_post(post_data) {
         let comment_input = comment_form.find(".comment-input").eq(0);
         let content = comment_input.val();
         let request = new XMLHttpRequest();
-
         request.onreadystatechange = function () {
             if (this.readyState === 4 && this.status === 200) {
                 console.log("COMMENT ADDED OK!");
                 console.log(new Date());
-
                 let comment_template = document.getElementById("comment-template");
                 let new_comment = $(comment_template.content.cloneNode(true).children[0]);
                 let new_content = new_comment.find(".comment-content").eq(0);
@@ -320,16 +281,6 @@ function setup_feed() {
             show_feed();
         }
     );
-
-    // let home_btn = document.getElementById("home-button");
-    // home_btn.addEventListener("click", () => {
-    //     document.getElementById("profile-pic-label").style.display = "block";
-    //     let follow_button = document.getElementById("follow-button");
-    //     let unfollow_button = document.getElementById("unfollow-button");
-    //     follow_button.style.display = "none";
-    //     unfollow_button.style.display = "none";
-    //     show_feed();
-    // });
     let new_post_form = document.getElementById("new-post-form");
     new_post_form.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -382,7 +333,6 @@ function setup_feed() {
             request.send(JSON.stringify({text: this.value}));
         }, 1000);
     });
-
     let follow_form = document.getElementById("follow-form");
     follow_form.addEventListener("submit", function (e) {
         e.preventDefault();
