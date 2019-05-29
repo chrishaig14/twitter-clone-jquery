@@ -60,21 +60,21 @@ function show_user(username) {
     console.log("### USERNAME: ", username, " ### CURRENT USER:", current_user);
     if (username !== current_user) {
         console.log("SEEING ANOTHER USER");
-        document.getElementById("profile-pic-label").style.display = "none";
-        let follow_button_o = document.getElementById("follow-button");
-        let follow_button = follow_button_o.cloneNode(true);
 
-        follow_button_o.parentElement.replaceChild(follow_button, follow_button_o);
-        let unfollow_button_o = document.getElementById("unfollow-button");
-        let unfollow_button = unfollow_button_o.cloneNode(true);
-        unfollow_button_o.parentElement.replaceChild(unfollow_button, unfollow_button_o);
-        follow_button.addEventListener("click", function () {
+        $("#profile-pic-label").hide();
+
+        let follow_button_o = $("#follow-button");
+        let follow_button = follow_button_o.clone(true);
+        follow_button_o.replaceWith(follow_button);
+        let unfollow_button_o = $("#unfollow-button");
+        let unfollow_button = unfollow_button_o.clone();
+        unfollow_button_o.replaceWith(unfollow_button);
+        follow_button.click(function () {
                 let xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 200) {
-
-                        unfollow_button.style.display = "block";
-                        follow_button.style.display = "none";
+                        unfollow_button.show();
+                        follow_button.hide();
                     }
                     console.log("NOW FOLLOWING USER:", username);
                 };
@@ -82,12 +82,12 @@ function show_user(username) {
                 xhr.send();
             }
         );
-        unfollow_button.addEventListener("click", function () {
+        unfollow_button.click(function () {
             let xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    unfollow_button.style.display = "none";
-                    follow_button.style.display = "block";
+                    unfollow_button.hide();
+                    follow_button.show();
                 }
 
                 console.log("STOPPED FOLLOWING USER:", username);
@@ -95,15 +95,18 @@ function show_user(username) {
             xhr.open("DELETE", "/users/" + current_user + "/followees/" + username);
             xhr.send();
         });
+
         let req = new XMLHttpRequest();
         req.onreadystatechange = function () {
             if (req.readyState === 4 && req.status === 200) {
-                follow_button.style.display = "none";
-                unfollow_button.style.display = "block";
+                follow_button.hide();
+                unfollow_button.show();
+
                 console.log("FOLLOWING!!!");
             } else if (req.readyState === 4 && req.status === 204) {
-                follow_button.style.display = "block";
-                unfollow_button.style.display = "none";
+                follow_button.show();
+                unfollow_button.hide();
+
                 console.log("NOT FOLLOWING!!!");
             }
         };
@@ -145,8 +148,6 @@ function show_user(username) {
     };
     user_info_req.open("GET", "/users/" + username);
     user_info_req.send();
-
-
 }
 
 
