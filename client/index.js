@@ -128,13 +128,11 @@ function show_user(username) {
                         console.log("POST: ", post);
                     }
                     make_feed({posts: all_posts});
-                    let user_name = document.getElementById("username-span");
-                    user_name.innerText = username;
+                    $("#username-span").text(username);
                     let img_req = new XMLHttpRequest();
                     img_req.onreadystatechange = function () {
                         if (img_req.readyState === 4 && img_req.status === 200) {
-                            let user_pic = document.getElementById("user-pic");
-                            user_pic.src = img_req.responseText;
+                            $("#user-pic").attr("src", img_req.responseText);
                         }
                     };
                     img_req.open("GET", "/users/" + username + "/img");
